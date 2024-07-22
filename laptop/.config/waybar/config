@@ -1,0 +1,57 @@
+
+{
+    "include": "~/.config/waybar/modules",
+    "layer": "top",
+    // "mode": "dock", 
+    "exclusive": true,
+    "passthrough": false,
+    "position": "top",
+    "spacing": 3,
+    "fixed-center": true,
+    "ipc": true,
+    "margin-top": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    
+    "modules-left": [
+        // "custom/appmenu",
+        "custom/menu",
+        "systemd-failed-units",
+        "hyprland/workspaces",
+        "hyprland/window"
+        // "wlr/taskbar"
+        // "cpu", 
+        // "temperature", 
+        // "memory"
+        // "disk", 
+        ],
+      
+    "modules-center": [
+        "clock",
+        "privacy"
+        // "custom/updates"
+        // "idle_inhibitor", 
+        // "hyprland/workspaces"
+        // "custom/light_dark"
+        ], 
+    
+    "modules-right": [
+        // "hyprland/window",
+        "group/hardware",
+        // "custom/music",
+        // "custom/chatgpt",
+        // "privacy",
+        "custom/weather", 
+        // "tray",
+        "pulseaudio",
+        // "backlight",
+        "battery",
+        "backlight",
+        "bluetooth",
+        "network",
+        // "clock"
+        // "custom/cycle_wall",
+        "custom/lock"
+        // "custom/power"
+        ]
+    }
