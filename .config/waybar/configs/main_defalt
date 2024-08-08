@@ -1,0 +1,51 @@
+
+// ### DUAL TOP and BOTTOM ### //
+
+{
+    "include": "~/.config/waybar/modules",
+    "layer": "top",
+    // "mode": "dock",
+    "exclusive": true,
+    "passthrough": false,
+    "position": "top",
+    "spacing": 4,
+    "fixed-center": true,
+    "ipc": true,
+    "margin-top": 0,
+    "margin-left": 7,
+    "margin-right": 7,
+    
+    "modules-left": [
+        // "custom/appmenu",
+        "custom/menu",
+        "systemd-failed-units",
+        "wlr/taskbar"
+        // "cpu", 
+        // "temperature", 
+        // "memory"
+        // "disk", 
+        ],
+      
+    "modules-center": [
+        // "idle_inhibitor", 
+        "hyprland/workspaces"
+        // "custom/light_dark",
+        ], 
+    
+    "modules-right": [
+        // "custom/updates", 
+        "hyprland/window",
+        "privacy",
+        "custom/weather", 
+        "tray",
+        "pulseaudio",
+        "backlight",
+        // "battery",
+        // "backlight",
+        "bluetooth",
+        "network",
+        "clock"
+        // "custom/cycle_wall",
+        // "custom/lock", 
+        ]
+    }
