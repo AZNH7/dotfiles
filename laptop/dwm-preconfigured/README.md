@@ -48,29 +48,11 @@ extra/libx11 1.6.12-1 [installed: 1.7.2-1]
 
 ```
 
-## Debian/Ubuntu
-```sh
-sudo apt install build-essential git libx11-dev libx11-xcb-dev libxcb-res0-dev libxinerama-dev libxft-dev libimlib2-dev
-```
-
 It is worth checking the version of gcc on debian based systems as they may come with older implementations that can result in compilation errors.
 ```sh
 gcc --version
 ```
 You would expect at least v8.x or above here.
-
-If you find yourself missing a library then this can usually be found by searching for the file name using apt-file, a tool that have to be installed separately:
-```sh
-$ sudo apt install apt-file
-$ sudo apt-file update
-$ apt-file search xcb/res.h
-libxcb-res0-dev: /usr/include/xcb/res.h
-```
-
-## Void Linux
-```sh
-sudo xbps-install -Su base-devel libX11-devel libXft-devel libXinerama-devel freetype-devel fontconfig-devel libxcb-devel imlib2-devel
-```
 
 If you find yourself missing a library then this can usually be found by searching for the file name using xlocate, a tool that have to be installed separately via the xtools package:
 ```sh
@@ -82,8 +64,8 @@ Installation
 ------------
 Clone the repository, then compile and install.
 ```sh
-$ git clone https://github.com/ChrisTitusTech/dwm-titus.git
-$ cd dwm-titus
+$ git clone https://github.com/AZNH7/dotfiles.git
+$ cd dotfiles
 $ make
 $ sudo make install
 ```

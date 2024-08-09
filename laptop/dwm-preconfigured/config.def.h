@@ -22,7 +22,7 @@ static const int colorfultag        = 1;        /* 0 means use SchemeSel for sel
 #define ICONSIZE                            17      /* icon size */
 #define ICONSPACING                         5       /* space between icon and title */
 #define SHOWWINICON                         1       /* 0 means no winicon */
-static const char *fonts[]                = { "MesloLGS Nerd Font Mono:size=16", "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"  };
+static const char *fonts[]                = { "JetBrainsMono Nerd Font Mono:size=16", "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"  };
 
 // theme
 // static const char normbordercolor[]       = "#3B4252"; // border color for unfocused window
@@ -95,17 +95,20 @@ static const char *colors[][3]      = {
 // };
 
 static const char *const autostart[] = {
-  "xrandr", "--output", "DisplayPort-0", "--mode", "2560x1440", "--rate", "144", "--pos", "0x0", "--rotate", "normal", "--output", "DisplayPort-1", "--primary" "--mode", "2560x1440", "--rate", "244", "--pos", "2560x0", "--rotate", "normal", NULL,
   "xset", "s", "off", NULL,
   "xset", "s", "noblank", NULL,
   "xset", "-dpms", NULL,
   "dbus-update-activation-environment", "--systemd", "--all", NULL,
   "/usr/lib/polkit-kde-authentication-agent-1", NULL,
   "flameshot", NULL,
+  "systemctl", "--user", "restart", "pipewire", NULL,
+  "systemctl", "--user", "restart", "pipewire-pulse", NULL,
+  "exec", "dbus-update-activation-environment --all", NULL,
   "dunst", "-config", "/home/aziz/.config/dunst/dunstrc", NULL,
   "picom", "--animations", "-b", NULL,
   "sh", "-c", "feh --randomize --bg-fill /home/aziz/.config/wallpapers/*", NULL,
-  "synergy", NULL,
+  "sh", "-c", "/home/aziz/Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm/scripts/status", NULL,
+//   "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm/scripts/sb-battery", NULL,
   "slstatus", NULL,
   "nextcloud", NULL,
   "solaar", "-w", "hide", NULL,
@@ -115,7 +118,7 @@ static const char *const autostart[] = {
   "unclutter", NULL,
   "kwalletd6", NULL,
   "conky", "-c", "/home/aziz/.config/conky/qtile/gruvbox-dark-01.conkyrc", NULL,
-  "rsync", "-avp", "--exclude={home_server, Nextcloud, gom, .cache, .conda, .cargo, Games, games, .local/share, .config/heroic, .rustup}", "/home/$USER/", "home_server/PC-backups/personal_PC_rsync/$(date +%Y-%m-%d)", NULL,
+  "rsync", "-avp", "--exclude={home_server, Nextcloud, gom, .cache, .conda, .cargo, Games, games, .local/share, .config/heroic, .rustup}", "/home/$USER/", "home_server/aziz-work/laptop_backup/flink/$(date +%Y-%m-%d)", NULL,
 };
 
 /* tagging */
@@ -149,7 +152,7 @@ static const Rule rules[] = {
 	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "eww",     NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "firefox", NULL, 	   NULL, 		   2 << 9, 	  0,    	  0,  	       0, 		 -1 },
-	{ "kitty",   NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "kitty",   NULL,     NULL,           1 << 2,    0,          1,           0,        -1 },
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
@@ -188,11 +191,11 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } }, // spawn a terminal
 	// { MODKEY|ShiftMask,             XK_b,          spawn,                  SHCMD ("xdg-open https://")}, // open default browser
 	{ MODKEY|ShiftMask,             XK_b,          spawn,				   {.v = browsercmd}}, // open firefox profile
-	{ MODKEY,                       XK_p,          spawn,                  SHCMD ("flameshot full -p /media/drive/Screenshots/")}, // capture full screen screenshot
-	{ MODKEY|ShiftMask,             XK_p,          spawn,                  SHCMD ("flameshot gui -p /media/drive/Screenshots/")}, // open flameshot gui for screenshot selection
+	{ MODKEY,                       XK_p,          spawn,                  SHCMD ("flameshot full -p Screenshots/")}, // capture full screen screenshot
+	{ MODKEY|ShiftMask,             XK_p,          spawn,                  SHCMD ("flameshot gui -p Screenshots/")}, // open flameshot gui for screenshot selection
 	{ MODKEY|ControlMask,           XK_p,          spawn,                  SHCMD ("flameshot gui --clipboard")}, // copy screenshot to clipboard
 	{ MODKEY|ShiftMask,             XK_f,          spawn,                  SHCMD ("thunar")}, // open thunar file manager
-	{ MODKEY,                       XK_w,          spawn,                  SHCMD ("looking-glass-client -F")}, // start Looking glass
+	// { MODKEY,                       XK_w,          spawn,                  SHCMD ("looking-glass-client -F")}, // start Looking glass
 	{ 0,                            0x1008ff02,    spawn,                  SHCMD ("xbacklight -inc 10")}, // increase backlight brightness
 	{ 0,                            0x1008ff03,    spawn,                  SHCMD ("xbacklight -dec 10")}, // decrease backlight brightness
 	{ 0,                            0x1008ff1b,    spawn,                  SHCMD ("xbacklight -inc 10")}, // increase backlight brightness
@@ -226,6 +229,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,     focusmon,               {.i = +1 } }, // focus on the next monitor, if any
 	{ MODKEY|ShiftMask,             XK_comma,      tagmon,                 {.i = -1 } }, // tag previous monitor
 	{ MODKEY|ShiftMask,             XK_period,     tagmon,                 {.i = +1 } }, // tag next monitor
+	{ MODKEY|ControlMask,           XK_l,          spawn,                  SHCMD("/home/aziz/Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm-preconfigured/scripts/lock")}, // i3lock to lock the screen
 	{ MODKEY,                       XK_n,          spawn,                  SHCMD("dunstctl history-pop")}, // show last notification
 	{ MODKEY|ShiftMask,             XK_n,          spawn,                  SHCMD("dunstctl close-all")}, // close all notifications
 	TAGKEYS(                        XK_1,                                  0)
