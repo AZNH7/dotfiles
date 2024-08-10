@@ -21,20 +21,56 @@ update_weather() {
   weather=$(curl -s "wttr.in/berlin?format=1")
 }
 
+# update_bat() {
+#   if [[ -e /sys/class/power_supply/BAT0/status ]]; then
+#     bat_status=$(< /sys/class/power_supply/BAT0/status)
+#     if [[ -e /sys/class/power_supply/BAT0/capacity ]]; then
+#       bat_capacity=$(< /sys/class/power_supply/BAT0/capacity)
+#       bat=" $bat_status $bat_capacity%"
+#     else
+#       bat="$bat_status (capacity not available)"
+#     fi
+#   fi
+# }
+
 update_bat() {
-  if [[ -e /sys/class/power_supply/BAT0/status ]]; then
-    bat_status=$(< /sys/class/power_supply/BAT0/status)
-    if [[ -e /sys/class/power_supply/BAT0/capacity ]]; then
-      bat_capacity=$(< /sys/class/power_supply/BAT0/capacity)
-      bat=" $bat_status $bat_capacity%"
-    else
-      bat="$bat_status (capacity not available)"
-    fi
-  fi
+    case $BLOCK_BUTTON in
+    	3) notify-send "🔋 Battery module" "🔋: discharging
+    🛑: not charging
+    ♻: stagnant charge
+    🔌: charging
+    ⚡: charged
+    ❗: battery very low!
+    - Scroll to change adjust xbacklight." ;;
+    	4) xbacklight -inc 10 ;;
+    	5) xbacklight -dec 10 ;;
+    	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+    esac
+
+    # Loop through all attached batteries and format the info
+    for battery in /sys/class/power_supply/BAT0; do
+    	# If non-first battery, print a space separator.
+    	[ -n "${capacity+x}" ] && printf " "
+    	# Sets up the status and capacity
+    	case "$(cat "$battery/status" 2>&1)" in
+    		"Full") status="" ;;
+    		"Discharging") status="󰂀" ;;
+    		"Charging") status="󰂄" ;;
+    		"Not charging") status="" ;;
+    		"Unknown") status="󱟩" ;;
+    		*) exit 1 ;;
+    	esac
+    	capacity="$(cat "$battery/capacity" 2>&1)"
+    	# Will make a warn variable if discharging and low
+    	[ "$status" = "󱊡" ] && [ "$capacity" -le 25 ] && warn="❗"
+    	# Prints the info
+    	printf "%s%s%d%%" "$status" "$warn" "$capacity"; unset warn
+        bat="$status $capacity%"
+    done
 }
 
 update_vol() {
-  vol="奄 $(pactl list sinks | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
+  vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
 }
 
 update_backlight() {
@@ -67,6 +103,12 @@ trap "update_bat; display" "RTMIN+2"
 # Initial updates
 update_vol
 update_backlight
+update_bat
+update_time
+update_weather
+update_cpu
+update_memory
+
 
 # Main loop
 while true; do
@@ -74,11 +116,10 @@ while true; do
   sec=$((sec + 1))
   case $((sec % 60)) in
     0) update_bat;;
-    [1-5]) 
+    [1-5])
       update_time
       update_vol
       display
       ;;
   esac
 done
-

@@ -6,7 +6,7 @@
 /* appearance */
 static const unsigned int refresh_rate    = 144;     /* matches dwm's mouse event processing to your monitor's refresh rate for smoother window interactions */
 static const unsigned int enable_noborder = 1;      /* toggles noborder feature (0=disabled, 1=enabled) */
-static const unsigned int borderpx        = 1;      /* border pixel of windows */
+static const unsigned int borderpx        = 2;      /* border pixel of windows */
 static const unsigned int snap            = 26;     /* snap pixel */
 static const int swallowfloating          = 1;      /* 1 means swallow floating windows by default */
 static const unsigned int systraypinning  = 0;      /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
@@ -57,7 +57,7 @@ enum Scheme {
     SchemeBtnClose,
     SchemeLast
 };
-#include "themes/gruvchad.h"
+#include "themes/onedark.h"
 static const char *colors[][3]      = {
     /*                     fg       bg      border */
     [SchemeNorm]       = { gray3,   black,  gray2 },
@@ -107,7 +107,7 @@ static const char *const autostart[] = {
   "dunst", "-config", "/home/aziz/.config/dunst/dunstrc", NULL,
   "picom", "--animations", "-b", NULL,
   "sh", "-c", "feh --randomize --bg-fill /home/aziz/.config/wallpapers/*", NULL,
-  "sh", "-c", "/home/aziz/Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm/scripts/status", NULL,
+  "sh", "-c", "./home/aziz/Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm/scripts/status", NULL,
 //   "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm/scripts/sb-battery", NULL,
   "slstatus", NULL,
   "nextcloud", NULL,
