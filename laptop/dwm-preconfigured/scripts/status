@@ -6,20 +6,20 @@ sec=0
 
 # Update functions
 update_cpu() {
-  cpu=$(awk '{print $1}' /proc/loadavg)
+  cpu="  $(awk '{print $1}' /proc/loadavg)"
 }
 
 update_memory() {
-  memory=$(free -h | awk 'NR==2 {print $3}')
+  memory="  $(free -h | awk 'NR==2 {print $3}' | sed 's/i//g')"
 }
 
 update_time() {
-  time=$(date "+%b %d %H:%M ")
+  time="  $(date "+%b %d %H:%M ")"
 }
 
-update_weather() {
-  weather=$(curl -s "wttr.in/berlin?format=1")
-}
+# update_weather() {
+#   weather=" $(curl -s "wttr.in/berlin?format=1" | awk '{print $2}')"
+# }
 
 # update_bat() {
 #   if [[ -e /sys/class/power_supply/BAT0/status ]]; then
@@ -70,7 +70,29 @@ update_bat() {
 }
 
 update_vol() {
-  vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
+  # Check if the volume is muted 
+  defualt_sink=$(pactl info | grep "Default Sink" | awk '{print $3}')
+  muted=$(pactl list sinks | grep -A 10 "$defualt_sink" | awk '/Mute:/ {print $2}')
+  
+  if [ "$muted" = "yes" ]; then
+    vol="󰖁 Muted"
+  else
+    vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+  fi
+
+  # vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+  # echo "Volume updated: $vol"  # Debugging output
+  # notify-send "Volume Update" "Current Volume: $vol"
+}
+
+# Function to listen for volume changes
+listen_for_volume_changes() {
+  pactl subscribe | while read -r event; do
+    if echo "$event" | grep -q "sink"; then
+      update_vol
+      display
+    fi
+  done
 }
 
 update_backlight() {
@@ -81,17 +103,36 @@ update_backlight() {
   fi
 }
 
+check_arch_updates() {
+  updates=$(checkupdates | wc -l)
+  if [[ $updates -gt 0 ]]; then
+    arch_updates=" $updates"
+  else
+    arch_updates=""
+  fi
+}
+
+wifi_status() {
+  if [[ -n $(iwgetid -r) ]]; then
+    wifi="󰤨$(iwgetid -r)"
+  else
+    wifi="󰤮"
+  fi
+}
+
 # Display function
 display() {
   status=""
-  [[ -n "$bat" ]] && status+="$bat "
+  [[ -n "$bat" ]] && status+=" $bat "
   [[ -n "$backlight" ]] && status+="$backlight "
   [[ -n "$vol" ]] && status+="$vol "
   [[ -n "$time" ]] && status+="$time"
-  [[ -n "$weather" ]] && status+="$weather"
-  [[ -n "$cpu" ]] && status+="$cpu "
+  [[ -n "$wifi" ]] && status+="$wifi"
+  [[ -n "$arch_updates" ]] && status+="$arch_updates"
+  # [[ -n "$weather" ]] && status+="$weather"
+  [[ -n "$cpu" ]] && status+="$cpu"
   [[ -n "$memory" ]] && status+="$memory"
-  [[ -n "$status" ]] &&
+  # [[ -n "$status" ]] &&
   xsetroot -name "$status"
 }
 
@@ -105,10 +146,13 @@ update_vol
 update_backlight
 update_bat
 update_time
-update_weather
 update_cpu
 update_memory
+# check_arch_updates
+wifi_status
 
+# Start the volume listener in the background
+listen_for_volume_changes &
 
 # Main loop
 while true; do
@@ -116,9 +160,13 @@ while true; do
   sec=$((sec + 1))
   case $((sec % 60)) in
     0) update_bat;;
+    10) update_backlight;;
+    20) update_time;;
+    30) update_cpu;;
+    40) update_memory;;
+    # 50) check_arch_updates;;
     [1-5])
-      update_time
-      update_vol
+      # update_time
       display
       ;;
   esac
