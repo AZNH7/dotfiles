@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # WALLPAPERS PATH
+<<<<<<< HEAD
 DIR=$HOME/.configz/wallpapers
+=======
+DIR=$HOME/.config/qtile/wallpapers
+>>>>>>> main
 
 # Transition config (type swww img --help for more settings
 FPS=30

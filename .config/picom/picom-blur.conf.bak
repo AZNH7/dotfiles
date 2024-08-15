@@ -1,3 +1,0 @@
-blur-background-exclude = [
-"name *= 'rect-overlay'",
-]
