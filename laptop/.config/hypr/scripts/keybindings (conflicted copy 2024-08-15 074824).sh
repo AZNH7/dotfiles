@@ -3,7 +3,7 @@
 # ----------------------------------------------------- 
 # Get keybindings location based on variation
 # ----------------------------------------------------- 
-config_file=$(cat ~/.config/hypr/conf/keybinding.conf)
+config_file=$(cat ~/.config/hypr/keybinding.conf)
 config_file=${config_file/source = ~/}
 config_file=${config_file/source=~/}
 
