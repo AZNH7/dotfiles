@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
-#include <X11/XF86keysym.h> // Include the necessary header for XF86 keysyms
-#include <X11/Xlib.h> // Include the necessary header for Xlib
+// #include <X11/XF86keysym.h> // Include the necessary header for XF86 keysyms
+// #include <X11/Xlib.h> // Include the necessary header for Xlib
 
 /* appearance */
 static const unsigned int refresh_rate    = 144;     /* matches dwm's mouse event processing to your monitor's refresh rate for smoother window interactions */
@@ -101,6 +101,7 @@ static const char *const autostart[] = {
   "xset", "-dpms", NULL,
   "dbus-update-activation-environment", "--systemd", "--all", NULL,
   "/usr/lib/polkit-kde-authentication-agent-1", NULL,
+  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/desktop/dwm/scripts/status", NULL,
   "flameshot", NULL,
   "dunst", "-config", "/home/aziz/.config/dunst/dunstrc", NULL,
   "picom", "--animations", "-b", NULL,
@@ -228,6 +229,17 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_period,     tagmon,                 {.i = +1 } }, // tag next monitor
 	{ MODKEY,                       XK_n,          spawn,                  SHCMD("dunstctl history-pop")}, // show last notification
 	{ MODKEY|ShiftMask,             XK_n,          spawn,                  SHCMD("dunstctl close-all")}, // close all notifications
+	{ MODKEY|ShiftMask,				XK_w,		   spawn, 				   SHCMD("feh --randomize --bg-fill /home/aziz/.config/wallpapers/*") }, // change wallpaper
+	{ MODKEY,                       XK_r,          spawn,                  SHCMD("dmenu_run") }, // spawn dmenu
+	{ MODKEY,                       XK_a,          spawn,                  SHCMD("pavucontrol") }, // spawn pavucontrol
+	{ MODKEY,                       XK_o,          spawn,                  SHCMD("obs") }, // spawn obs
+	{ MODKEY,                       XK_q,          spawn,                  SHCMD("qutebrowser") }, // spawn qutebrowser
+	{ MODKEY,                       XK_u,          spawn,                  SHCMD("ulauncher") }, // spawn ulauncher
+	{ MODKEY,                       XK_i,          spawn,                  SHCMD("flameshot gui") }, // spawn flameshot
+	{ MODKEY,                       XK_b,          spawn,                  SHCMD("blueman-manager") }, // spawn blueman-manager
+	{ MODKEY,                       XK_F2,         spawn,                  SHCMD("dmenupower") }, // spawn dmenupower
+	{ MODKEY,                       XK_F3,         spawn,                  SHCMD("dmenurecent") }, // spawn dmenurecent
+	{ MODKEY,                       XK_F4,         spawn,                  SHCMD("dmenuemoji") }, // spawn dmenuemoji					
 	TAGKEYS(                        XK_1,                                  0)
 	TAGKEYS(                        XK_2,                                  1)
 	TAGKEYS(                        XK_3,                                  2)
