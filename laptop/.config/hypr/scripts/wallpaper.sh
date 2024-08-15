@@ -1,6 +1,14 @@
 #!/bin/bash
+#                _ _                              
+# __      ____ _| | |_ __   __ _ _ __   ___ _ __  
+# \ \ /\ / / _` | | | '_ \ / _` | '_ \ / _ \ '__| 
+#  \ V  V / (_| | | | |_) | (_| | |_) |  __/ |    
+#   \_/\_/ \__,_|_|_| .__/ \__,_| .__/ \___|_|    
+#                   |_|         |_|               
+#  
+# by Stephan Raabe (2023) 
+# ----------------------------------------------------- 
 
-<<<<<<< HEAD
 # Cache file for holding the current wallpaper
 cache_file="$HOME/.cache/current_wallpaper"
 rasi_file="$HOME/.cache/current_wallpaper.rasi"
@@ -94,51 +102,3 @@ sleep 1
 notify-send "Colors and Wallpaper updated" "with image $newwall"
 
 echo "DONE!"
-=======
-DIR=$HOME/.config/qtile/wallpapers
-PICS=($(find ${DIR} -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" \)))
-RANDOMPICS=${PICS[ $RANDOM % ${#PICS[@]} ]}
-
-change_swaybg(){
-  pkill swww
-  pkill swaybg
-  swaybg -m fill -i ${RANDOMPICS}
-}
-
-change_swww(){
-  pkill swaybg
-  swww query || swww init
-  swww img ${RANDOMPICS} --transition-fps 30 --transition-type any --transition-duration 3
-}
-
-change_current(){
-  if pidof swaybg >/dev/null; then
-    change_swaybg
-  else
-    change_swww
-  fi
-}
-
-switch(){
-  if pidof swaybg >/dev/null; then
-    change_swww
-  else
-    change_swaybg
-  fi
-}
-
-case "$1" in
-	"swaybg")
-		change_swaybg
-		;;
-	"swww")
-		change_swww
-		;;
-  "s")
-		switch
-		;;
-	*)
-		change_current
-		;;
-esac
->>>>>>> main
