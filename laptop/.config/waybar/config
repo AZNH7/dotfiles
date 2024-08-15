@@ -29,19 +29,39 @@
     "modules-center": [
         "clock",
         "privacy"
+<<<<<<< HEAD
+        // "custom/updates"
+=======
+>>>>>>> main
         // "idle_inhibitor", 
         // "hyprland/workspaces"
         // "custom/light_dark"
         ], 
     
     "modules-right": [
+<<<<<<< HEAD
+=======
         // "custom/updates", 
+>>>>>>> main
         // "hyprland/window",
         "group/hardware",
         // "custom/music",
         // "custom/chatgpt",
         // "privacy",
         "custom/weather", 
+<<<<<<< HEAD
+        // "tray",
+        "pulseaudio",
+        // "backlight",
+        "battery",
+        "backlight",
+        "bluetooth",
+        "network",
+        // "clock"
+        // "custom/cycle_wall",
+        "custom/lock"
+        // "custom/power"
+=======
         "tray",
         "pulseaudio",
         // "backlight",
@@ -53,5 +73,6 @@
         // "custom/cycle_wall",
         "custom/lock", 
         "custom/power"
+>>>>>>> main
         ]
     }

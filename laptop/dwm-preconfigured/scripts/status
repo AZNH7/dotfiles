@@ -1,0 +1,173 @@
+#!/usr/bin/env bash
+
+# Initialize
+printf "$$" > ~/.cache/pidofbar
+sec=0
+
+# Update functions
+update_cpu() {
+  cpu="  $(awk '{print $1}' /proc/loadavg)"
+}
+
+update_memory() {
+  memory="  $(free -h | awk 'NR==2 {print $3}' | sed 's/i//g')"
+}
+
+update_time() {
+  time="  $(date "+%b %d %H:%M ")"
+}
+
+# update_weather() {
+#   weather=" $(curl -s "wttr.in/berlin?format=1" | awk '{print $2}')"
+# }
+
+# update_bat() {
+#   if [[ -e /sys/class/power_supply/BAT0/status ]]; then
+#     bat_status=$(< /sys/class/power_supply/BAT0/status)
+#     if [[ -e /sys/class/power_supply/BAT0/capacity ]]; then
+#       bat_capacity=$(< /sys/class/power_supply/BAT0/capacity)
+#       bat=" $bat_status $bat_capacity%"
+#     else
+#       bat="$bat_status (capacity not available)"
+#     fi
+#   fi
+# }
+
+update_bat() {
+    case $BLOCK_BUTTON in
+    	3) notify-send "🔋 Battery module" "🔋: discharging
+    🛑: not charging
+    ♻: stagnant charge
+    🔌: charging
+    ⚡: charged
+    ❗: battery very low!
+    - Scroll to change adjust xbacklight." ;;
+    	4) xbacklight -inc 10 ;;
+    	5) xbacklight -dec 10 ;;
+    	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+    esac
+
+    # Loop through all attached batteries and format the info
+    for battery in /sys/class/power_supply/BAT0; do
+    	# If non-first battery, print a space separator.
+    	[ -n "${capacity+x}" ] && printf " "
+    	# Sets up the status and capacity
+    	case "$(cat "$battery/status" 2>&1)" in
+    		"Full") status="" ;;
+    		"Discharging") status="󰂀" ;;
+    		"Charging") status="󰂄" ;;
+    		"Not charging") status="" ;;
+    		"Unknown") status="󱟩" ;;
+    		*) exit 1 ;;
+    	esac
+    	capacity="$(cat "$battery/capacity" 2>&1)"
+    	# Will make a warn variable if discharging and low
+    	[ "$status" = "󱊡" ] && [ "$capacity" -le 25 ] && warn="❗"
+    	# Prints the info
+    	printf "%s%s%d%%" "$status" "$warn" "$capacity"; unset warn
+        bat="$status $capacity%"
+    done
+}
+
+update_vol() {
+  # Check if the volume is muted
+  muted=$(pactl list sinks | awk '/Mute:/ {print $2}' | sed -n '2p')
+  
+  if [ "$muted" = "yes" ]; then
+    vol="󰖁 Muted"
+  else
+    vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+  fi
+
+  # vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+  # echo "Volume updated: $vol"  # Debugging output
+  # notify-send "Volume Update" "Current Volume: $vol"
+}
+
+# Function to listen for volume changes
+listen_for_volume_changes() {
+  pactl subscribe | while read -r event; do
+    if echo "$event" | grep -q "sink"; then
+      update_vol
+      display
+    fi
+  done
+}
+
+update_backlight() {
+  if [[ -e /sys/class/backlight/intel_backlight/actual_brightness ]]; then
+    actual_brightness=$(< /sys/class/backlight/intel_backlight/actual_brightness)
+    max_brightness=$(< /sys/class/backlight/intel_backlight/max_brightness)
+    backlight="☀$((actual_brightness * 100 / max_brightness))%"
+  fi
+}
+
+check_arch_updates() {
+  updates=$(checkupdates | wc -l)
+  if [[ $updates -gt 0 ]]; then
+    arch_updates=" $updates"
+  else
+    arch_updates=""
+  fi
+}
+
+wifi_status() {
+  if [[ -n $(iwgetid -r) ]]; then
+    wifi="󰤨$(iwgetid -r)"
+  else
+    wifi="󰤮"
+  fi
+}
+
+# Display function
+display() {
+  status=""
+  [[ -n "$bat" ]] && status+=" $bat "
+  # [[ -n "$backlight" ]] && status+="$backlight "
+  [[ -n "$vol" ]] && status+="$vol "
+  [[ -n "$time" ]] && status+="$time"
+  [[ -n "$wifi" ]] && status+="$wifi"
+  [[ -n "$arch_updates" ]] && status+="$arch_updates"
+  # [[ -n "$weather" ]] && status+="$weather"
+  [[ -n "$cpu" ]] && status+="$cpu"
+  [[ -n "$memory" ]] && status+="$memory"
+  # [[ -n "$status" ]] &&
+  xsetroot -name "$status"
+}
+
+# Set up signal handlers
+trap "update_vol; display" "RTMIN"
+trap "update_backlight; display" "RTMIN+1"
+trap "update_bat; display" "RTMIN+2"
+
+# Initial updates
+update_vol
+update_backlight
+update_bat
+update_time
+update_weather
+update_cpu
+update_memory
+# check_arch_updates
+wifi_status
+
+# Start the volume listener in the background
+listen_for_volume_changes &
+
+# Main loop
+while true; do
+  sleep 1
+  sec=$((sec + 1))
+  case $((sec % 60)) in
+    0) update_bat;;
+    10) update_backlight;;
+    # 20) update_weather;;
+    30) update_cpu;;
+    40) update_memory;;
+    # 50) check_arch_updates;;
+    [1-5])
+      update_time
+      display
+      ;;
+  esac
+done

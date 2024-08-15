@@ -177,10 +177,17 @@ tooltip label{
     color: @accent5;
 }
 
+<<<<<<< HEAD
+#battery.charging {
+    color: #ffffff;
+    background-color: #26A65B;
+}
+=======
 /* #battery.charging {
     color: #ffffff;
     background-color: #26A65B;
 } */
+>>>>>>> main
 
 @keyframes blink {
     to {
