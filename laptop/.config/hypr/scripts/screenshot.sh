@@ -1,80 +1,32 @@
 #!/bin/bash
+#  ____                               _           _    
+# / ___|  ___ _ __ ___  ___ _ __  ___| |__   ___ | |_  
+# \___ \ / __| '__/ _ \/ _ \ '_ \/ __| '_ \ / _ \| __| 
+#  ___) | (__| | |  __/  __/ | | \__ \ | | | (_) | |_  
+# |____/ \___|_|  \___|\___|_| |_|___/_| |_|\___/ \__| 
+#                                                      
+#  
+# by Stephan Raabe (2023) 
+# ----------------------------------------------------- 
 
-iDIR="$HOME/.config/hypr/mako/icons"
+DIR="$HOME/Pictures/screenshots/"
+NAME="screenshot_$(date +%d%m%Y_%H%M%S).png"
 
-time=$(date +%Y-%m-%d-%H-%M-%S)
-dir="$(xdg-user-dir)/Pictures/Screenshots"
-file="Screenshot_${time}_${RANDOM}.png"
+option2="Selected area"
+option3="Fullscreen (delay 3 sec)"
 
-# notify and view screenshot
-notify_cmd_shot="notify-send -h string:x-canonical-private-synchronous:shot-notify -u low -i ${iDIR}/picture.png"
-notify_view() {
-	${notify_cmd_shot} "Copied to clipboard."
-##	viewnior ${dir}/"$file"
-	if [[ -e "$dir/$file" ]]; then
-		${notify_cmd_shot} "Screenshot Saved."
-	else
-		${notify_cmd_shot} "Screenshot Deleted."
-	fi
-}
+options="$option2\n$option3"
 
-# countdown
-countdown() {
-	for sec in $(seq $1 -1 1); do
-		notify-send -h string:x-canonical-private-synchronous:shot-notify -t 1000 -i "$iDIR"/timer.png "Taking shot in : $sec"
-		sleep 1
-	done
-}
+choice=$(echo -e "$options" | rofi -dmenu -replace -config ~/dotfiles/rofi/config-screenshot.rasi -i -no-show-icons -l 2 -width 30 -p "Take Screenshot")
 
-# take shots
-shotnow() {
-	cd ${dir} && grim - | tee "$file" | wl-copy
-	sleep 2
-	notify_view
-}
-
-shot5() {
-	countdown '5'
-	sleep 1 && cd ${dir} && grim - | tee "$file" | wl-copy
-	sleep 1
-	notify_view
-	
-}
-
-shot10() {
-	countdown '10'
-	sleep 1 && cd ${dir} && grim - | tee "$file" | wl-copy
-	notify_view
-}
-
-shotwin() {
-	w_pos=$(hyprctl activewindow | grep 'at:' | cut -d':' -f2 | tr -d ' ' | tail -n1)
-	w_size=$(hyprctl activewindow | grep 'size:' | cut -d':' -f2 | tr -d ' ' | tail -n1 | sed s/,/x/g)
-	cd ${dir} && grim -g "$w_pos $w_size" - | tee "$file" | wl-copy
-	notify_view
-}
-
-shotarea() {
-	cd ${dir} && grim -g "$(slurp)" - | tee "$file" | wl-copy
-	notify_view
-}
-
-if [[ ! -d "$dir" ]]; then
-	mkdir -p "$dir"
-fi
-
-if [[ "$1" == "--now" ]]; then
-	shotnow
-elif [[ "$1" == "--in5" ]]; then
-	shot5
-elif [[ "$1" == "--in10" ]]; then
-	shot10
-elif [[ "$1" == "--win" ]]; then
-	shotwin
-elif [[ "$1" == "--area" ]]; then
-	shotarea
-else
-	echo -e "Available Options : --now --in5 --in10 --win --area"
-fi
-
-exit 0
+case $choice in
+    $option2)
+        grim -g "$(slurp)" - | swappy -f -
+        notify-send "Screenshot created" "Mode: Selected area"
+    ;;
+    $option3)
+        sleep 3
+        grim - | swappy -f -
+        notify-send "Screenshot created" "Mode: Fullscreen"
+    ;;
+esac
