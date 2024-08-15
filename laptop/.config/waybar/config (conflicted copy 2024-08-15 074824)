@@ -29,29 +29,29 @@
     "modules-center": [
         "clock",
         "privacy"
+        // "custom/updates"
         // "idle_inhibitor", 
         // "hyprland/workspaces"
         // "custom/light_dark"
         ], 
     
     "modules-right": [
-        // "custom/updates", 
         // "hyprland/window",
         "group/hardware",
         // "custom/music",
         // "custom/chatgpt",
         // "privacy",
         "custom/weather", 
-        "tray",
+        // "tray",
         "pulseaudio",
         // "backlight",
-        // "battery",
-        // "backlight",
+        "battery",
+        "backlight",
         "bluetooth",
-        // "network",
+        "network",
         // "clock"
         // "custom/cycle_wall",
-        "custom/lock", 
-        "custom/power"
+        "custom/lock"
+        // "custom/power"
         ]
     }

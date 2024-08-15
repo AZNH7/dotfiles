@@ -106,6 +106,7 @@ static const char *const autostart[] = {
   "dunst", "-config", "/home/$USER/.config/dunst/dunstrc", NULL,
   "picom", "--animations", "-b", NULL,
   "sh", "-c", "feh --randomize --bg-fill /home/$USER/.config/wallpapers/*", NULL,
+  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/desktop/dwm-preconfigured/scripts/status", NULL,
   "synergy", NULL,
   "slstatus", NULL,
   "nextcloud", NULL,

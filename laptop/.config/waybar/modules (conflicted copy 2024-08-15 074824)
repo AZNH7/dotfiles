@@ -20,19 +20,19 @@
             "code": "󰨞",
             "code-Insiders": "󰨞", 
             "zoom": "",
-            "obsidian": "",
+            "title<.*Meet.*>": "",
+            "obsidian": "",
             "discord": "",
             "Cursor": "󰨞",
             "ChatGPT" : "",
             "Microsoft Edge": "",
             "Steam": "",
-            "title<.*github.*>": "",
-            "title<.*Calendar.*>": ""
-            // "title<.*mail.*>": ""
-            // "title<.*Agile board.*>": "",
-            // "title<.*Jira.*>": "",
-            // "title<.*Inbox*>": ""
-
+            "title<.*github.*>": "󰊤",
+            "title<.*Mail.*>": "󰻧",
+            "title<.*Calendar.*>": "",
+            "title<.*jira.*>": "󰌃",
+            "title<Nextcloud>": "󰴋",
+            "title<.*.pdf>": "󰈦"
         }
     },
 
@@ -48,15 +48,15 @@
     "hyprland/window": {
         "format": "👉 {}",
         "rewrite": {
-            "(.*) — Mozilla Firefox": "🌎 $1",
+            "(.*) — Mozilla Firefox": "󰈹 $1",
             "(.*) - Kitty": "🐱 > $1",
             "(.*) - Slack": "💬 $1",
             "(.*) - Microsoft Teams": "👥 $1",
             "(.*) - Zoom": "👥 $1",
             "(.*) - Microsoft Teams - Preview": "👥 $1",
             "(.*) - Microsoft Edge": "🌎 $1",
-            "(.*) - Chromium": "🌎 $1",
-            "(.*) - Obsidian": "📝 $1"
+            "(.*) - Chromium": " $1",
+            "(.*) - Obsidian": " $1"
 
         },
         "separate-outputs": true
@@ -194,13 +194,13 @@
 
     // CPU
     "cpu": {
-        "format": " {usage}% ",
+        "format": "󰍛 {usage}% ",
         "on-click": "kitty -e htop"
     },
 
     // Memory
     "memory": {
-        "format": "﬙ {used:0.1f}G",
+        "format": "󰍛 {used:0.1f}G",
         "on-click": "kitty -e htop"
     },
 
@@ -272,21 +272,21 @@
         "on-click": "kitty -e nmtui"
     },
 
-    // // Battery
-    // "battery": {
-    //     "states": {
-    //         // "good": 95,
-    //         "warning": 30,
-    //         "critical": 15
-    //     },
-    //     "format": "{icon}   {capacity}%",
-    //     "format-charging": "  {capacity}%",
-    //     "format-plugged": "  {capacity}%",
-    //     "format-alt": "{icon}  {time}",
-    //     // "format-good": "", // An empty format will hide the module
-    //     // "format-full": "",
-    //     "format-icons": [" ", " ", " ", " ", " "]
-    // },
+    // Battery
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{icon} {time}",
+        // "format-good": "", // An empty format will hide the module
+        // "format-full": "",
+        "format-icons": [" ", " ", " ", " ", " "]
+    },
 
     // Pulseaudio
     "pulseaudio": {
