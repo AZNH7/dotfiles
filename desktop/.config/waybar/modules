@@ -48,15 +48,24 @@
     "hyprland/window": {
         "format": "👉 {}",
         "rewrite": {
+<<<<<<< HEAD
             "(.*) — Mozilla Firefox": "󰈹 $1",
+=======
+            "(.*) — Mozilla Firefox": "🌎 $1",
+>>>>>>> main
             "(.*) - Kitty": "🐱 > $1",
             "(.*) - Slack": "💬 $1",
             "(.*) - Microsoft Teams": "👥 $1",
             "(.*) - Zoom": "👥 $1",
             "(.*) - Microsoft Teams - Preview": "👥 $1",
             "(.*) - Microsoft Edge": "🌎 $1",
+<<<<<<< HEAD
             "(.*) - Chromium": " $1",
             "(.*) - Obsidian": " $1"
+=======
+            "(.*) - Chromium": "🌎 $1",
+            "(.*) - Obsidian": "📝 $1"
+>>>>>>> main
 
         },
         "separate-outputs": true
@@ -194,13 +203,21 @@
 
     // CPU
     "cpu": {
+<<<<<<< HEAD
         "format": "󰍛 {usage}% ",
+=======
+        "format": " {usage}% ",
+>>>>>>> main
         "on-click": "kitty -e htop"
     },
 
     // Memory
     "memory": {
+<<<<<<< HEAD
         "format": "󰍛 {used:0.1f}G",
+=======
+        "format": "﬙ {used:0.1f}G",
+>>>>>>> main
         "on-click": "kitty -e htop"
     },
 
