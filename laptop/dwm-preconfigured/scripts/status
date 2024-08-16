@@ -70,8 +70,9 @@ update_bat() {
 }
 
 update_vol() {
-  # Check if the volume is muted
-  muted=$(pactl list sinks | awk '/Mute:/ {print $2}' | sed -n '2p')
+  # Check if the volume is muted 
+  defualt_sink=$(pactl info | grep "Default Sink" | awk '{print $3}')
+  muted=$(pactl list sinks | grep -A 10 "$defualt_sink" | awk '/Mute:/ {print $2}')
   
   if [ "$muted" = "yes" ]; then
     vol="󰖁 Muted"
@@ -123,7 +124,7 @@ wifi_status() {
 display() {
   status=""
   [[ -n "$bat" ]] && status+=" $bat "
-  # [[ -n "$backlight" ]] && status+="$backlight "
+  [[ -n "$backlight" ]] && status+="$backlight "
   [[ -n "$vol" ]] && status+="$vol "
   [[ -n "$time" ]] && status+="$time"
   [[ -n "$wifi" ]] && status+="$wifi"
@@ -145,7 +146,6 @@ update_vol
 update_backlight
 update_bat
 update_time
-update_weather
 update_cpu
 update_memory
 # check_arch_updates
@@ -161,12 +161,12 @@ while true; do
   case $((sec % 60)) in
     0) update_bat;;
     10) update_backlight;;
-    # 20) update_weather;;
+    20) update_time;;
     30) update_cpu;;
     40) update_memory;;
     # 50) check_arch_updates;;
     [1-5])
-      update_time
+      # update_time
       display
       ;;
   esac
