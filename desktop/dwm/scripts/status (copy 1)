@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+# Initialize
+printf "$$" > ~/.cache/pidofbar
+sec=0
+
+# Update functions
+update_cpu() {
+  cpu="  $(awk '{print $1}' /proc/loadavg)"
+}
+
+update_memory() {
+  memory="  $(free -h | awk 'NR==2 {print $3}' | sed 's/i//g')"
+}
+
+update_time() {
+  time="  $(date "+%b %d %H:%M ")"
+}
+
+update_vol() {
+  # Check if the volume is muted
+  muted=$(pactl list sinks | awk '/Mute:/ {print $2}' | sed -n '2p')
+  
+  if [ "$muted" = "yes" ]; then
+    vol="󰖁 Muted"
+  else
+    vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+  fi
+
+  # vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+  # echo "Volume updated: $vol"  # Debugging output
+  # notify-send "Volume Update" "Current Volume: $vol"
+}
+
+# Function to listen for volume changes
+listen_for_volume_changes() {
+  pactl subscribe | while read -r event; do
+    if echo "$event" | grep -q "sink"; then
+      update_vol
+      display
+    fi
+  done
+}
+
+
+check_arch_updates() {
+  updates=$(checkupdates | wc -l)
+  if [[ $updates -gt 0 ]]; then
+    arch_updates=" $updates"
+  else
+    arch_updates=""
+  fi
+}
+
+ethernet_status() {
+  if ip link show enp0s31f6 | grep -q "state UP"; then
+    wifi="󰈁 "
+  else
+    wifi="󰈂 "
+  fi
+}
+
+# Display function
+display() {
+  status=""
+  [[ -n "$vol" ]] && status+="$vol "
+  [[ -n "$time" ]] && status+="$time"
+  [[ -n "$wifi" ]] && status+="$wifi"
+  [[ -n "$arch_updates" ]] && status+="$arch_updates"
+  # [[ -n "$weather" ]] && status+="$weather"
+  [[ -n "$cpu" ]] && status+="$cpu"
+  [[ -n "$memory" ]] && status+="$memory"
+  [[ -n "$status" ]] &&
+  xsetroot -name "$status"
+}
+
+# Set up signal handlers
+trap "update_vol; display" "RTMIN"
+trap "update_backlight; display" "RTMIN+1"
+trap "update_bat; display" "RTMIN+2"
+
+# Initial updates
+update_vol
+update_time
+# update_weather
+update_cpu
+update_memory
+check_arch_updates
+ethernet_status
+
+
+# Start the volume listener in the background
+listen_for_volume_changes &
+
+# Main loop
+while true; do
+  sleep 1
+  sec=$((sec + 1))
+  case $((sec % 60)) in
+    # 20) update_weather;;
+    30) update_cpu;;
+    40) update_memory;;
+    # 50) check_arch_updates;;
+    [1-5])
+      update_time
+      display
+      ;;
+  esac
+done
