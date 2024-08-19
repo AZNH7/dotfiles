@@ -20,16 +20,15 @@ update_time() {
 update_vol() {
   # Check if the volume is muted
   muted=$(pactl list sinks | awk '/Mute:/ {print $2}' | sed -n '2p')
-  
+  # Get the default sink name
+  default_sink=$(pactl get-default-sink)
+  # Get the volume of the default sink
   if [ "$muted" = "yes" ]; then
-    vol="󰖁 Muted"
+    vol=" 󰖁 Muted"
   else
-    vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+    vol=" 󰕾 $(pactl list sinks | grep -A 7 "$default_sink" | awk '/Volume:/ {print $5}' | sed -n '1p'  | tr -d '%')%"
+    # vol=" 󰕾 $(pactl list sinks | grep -A 15 "$default_sink" | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
   fi
-
-  # vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
-  # echo "Volume updated: $vol"  # Debugging output
-  # notify-send "Volume Update" "Current Volume: $vol"
 }
 
 # Function to listen for volume changes
@@ -100,7 +99,7 @@ while true; do
     # 20) update_weather;;
     30) update_cpu;;
     40) update_memory;;
-    # 50) check_arch_updates;;
+    50) check_arch_updates;;
     [1-5])
       update_time
       display

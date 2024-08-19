@@ -1,1 +1,10 @@
 
+**/**/config.h
+**/**/config.def.h.orig
+**/**/config.def.h.rej
+**/**/config.mk.orig
+**/**/config.mk.rej
+**/**/drw.c.orig
+**/**/drw.h.orig
+**/**/dwm.c.orig
+**/**/dwm.c.rej

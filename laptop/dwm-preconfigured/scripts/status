@@ -77,7 +77,9 @@ update_vol() {
   if [ "$muted" = "yes" ]; then
     vol="󰖁 Muted"
   else
+    # vol="󰕾 $(pactl list sinks | grep -A 15 "$default_sink" | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
     vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+    echo "Volume updated: $vol"  # Debugging output
   fi
 
   # vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
@@ -132,7 +134,7 @@ display() {
   # [[ -n "$weather" ]] && status+="$weather"
   [[ -n "$cpu" ]] && status+="$cpu"
   [[ -n "$memory" ]] && status+="$memory"
-  # [[ -n "$status" ]] &&
+  [[ -n "$status" ]] &&
   xsetroot -name "$status"
 }
 
@@ -148,7 +150,7 @@ update_bat
 update_time
 update_cpu
 update_memory
-# check_arch_updates
+check_arch_updates
 wifi_status
 
 # Start the volume listener in the background
@@ -164,7 +166,7 @@ while true; do
     20) update_time;;
     30) update_cpu;;
     40) update_memory;;
-    # 50) check_arch_updates;;
+    50) check_arch_updates;;
     [1-5])
       # update_time
       display

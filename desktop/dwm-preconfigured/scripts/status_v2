@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+# Initialize
+printf "$$" > ~/.cache/pidofbar
+sec=0
+
+# display date and time 
+date_time() {
+  date_time=" $(date "+%b %d %H:%M")"
+#   echo "$date_time"
+}
+
+# display volume
+volume() {
+  # Check if the volume is muted
+  muted=$(pactl list sinks | awk '/Mute:/ {print $2}' | sed -n '2p')
+  # Get the default sink name
+  default_sink=$(pactl get-default-sink)
+  # Get the volume of the default sink
+  if [ "$muted" = "yes" ]; then
+    vol=" 󰖁 Muted"
+  else
+    vol=" 󰕾 $(pactl list sinks | grep -A 7 "$default_sink" | awk '/Volume:/ {print $5}' | sed -n '1p'  | tr -d '%')%"
+    # vol=" 󰕾 $(pactl list sinks | grep -A 15 "$default_sink" | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
+  fi
+#   echo "$vol"
+}
+
+# display connection status
+ethernet_status() {
+  if ip link show enp0s31f6 | grep -q "state UP"; then
+    wifi=" 󰈁 "
+  else
+    wifi=" 󰈂 "
+  fi
+}
+
+# display monitor conected and the defualt monitor name
+active_monitor() {
+    # check if more than one monitor is connected
+    if xrandr | grep -q " connected"; then
+        monitor=" 󰏭 $(xrandr --listactivemonitors | grep -oP 'eDP.*' | cut -d ' ' -f 1)"
+    else
+        monitor=""
+    fi
+}
+# monitor=" 󰨇 $(xrandr --listactivemonitors | awk '/0:/ {print $4}') $(xrandr --listactivemonitors | awk '/1:/ {print $4}')"
+
+# display arch updates if any available
+arch_updates() {
+  updates=$(checkupdates | wc -l)
+  if [[ $updates -gt 0 ]]; then
+    arch_updates=" $updates"
+  else
+    arch_updates=""
+  fi
+#   echo "$arch_updates"
+}
+
+# # run the display function every second 
+# while true; do
+#   date_time
+#   volume
+#   sleep 1
+# done
+
+# # run other functions every 20 minutes 
+# while true; do
+#   arch_updates
+#   eth_wifi
+#   sleep 1200
+# done
+
+# diplay function in the status bar
+while true; do
+  date_time
+  volume
+  ethernet_status
+  active_monitor
+
+  status=""
+  [[ -n "$monitor" ]] && status+="$monitor"
+  [[ -n "$vol" ]] && status+="$vol "
+  [[ -n "$date_time" ]] && status+="$date_time"
+  [[ -n "$eth" ]] && status+="$eth"
+  [[ -n "$wifi" ]] && status+="$wifi"
+  [[ -n "$arch_updates" ]] && status+="$arch_updates"
+  xsetroot -name "$status"
+  sleep 1
+done
