@@ -17,21 +17,6 @@ update_time() {
   time="  $(date "+%b %d %H:%M ")"
 }
 
-# update_weather() {
-#   weather=" $(curl -s "wttr.in/berlin?format=1" | awk '{print $2}')"
-# }
-
-# update_bat() {
-#   if [[ -e /sys/class/power_supply/BAT0/status ]]; then
-#     bat_status=$(< /sys/class/power_supply/BAT0/status)
-#     if [[ -e /sys/class/power_supply/BAT0/capacity ]]; then
-#       bat_capacity=$(< /sys/class/power_supply/BAT0/capacity)
-#       bat=" $bat_status $bat_capacity%"
-#     else
-#       bat="$bat_status (capacity not available)"
-#     fi
-#   fi
-# }
 
 update_bat() {
     case $BLOCK_BUTTON in
@@ -71,14 +56,14 @@ update_bat() {
 
 update_vol() {
   # Check if the volume is muted 
-  defualt_sink=$(pactl info | grep "Default Sink" | awk '{print $3}')
-  muted=$(pactl list sinks | grep -A 10 "$defualt_sink" | awk '/Mute:/ {print $2}')
+  default_sink=$(pactl info | grep "Default Sink" | awk '{print $3}')
+  muted=$(pactl list sinks | grep -A 10 "$default_sink" | awk '/Mute:/ {print $2}')
   
   if [ "$muted" = "yes" ]; then
     vol="󰖁 Muted"
   else
-    # vol="󰕾 $(pactl list sinks | grep -A 15 "$default_sink" | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
-    vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
+    vol="󰕾 $(pactl list sinks | grep -A 15 "$default_sink" | awk '/Volume:/ {print $5}' | head -n 1 | tr -d '%')%"
+    # vol="󰕾 $(pactl list sinks | awk '/Volume:/ {print $5}' | sed -n '3p' | tr -d '%')%"
     echo "Volume updated: $vol"  # Debugging output
   fi
 
@@ -92,7 +77,6 @@ listen_for_volume_changes() {
   pactl subscribe | while read -r event; do
     if echo "$event" | grep -q "sink"; then
       update_vol
-      display
     fi
   done
 }
@@ -131,11 +115,11 @@ display() {
   [[ -n "$time" ]] && status+="$time"
   [[ -n "$wifi" ]] && status+="$wifi"
   [[ -n "$arch_updates" ]] && status+="$arch_updates"
-  # [[ -n "$weather" ]] && status+="$weather"
   [[ -n "$cpu" ]] && status+="$cpu"
   [[ -n "$memory" ]] && status+="$memory"
-  [[ -n "$status" ]] &&
-  xsetroot -name "$status"
+  [[ -n "$status" ]] && xsetroot -name "$status"
+  # [[ -n "$status" ]] &&
+  # xsetroot -name "$status"
 }
 
 # Set up signal handlers
@@ -162,14 +146,14 @@ while true; do
   sec=$((sec + 1))
   case $((sec % 60)) in
     0) update_bat;;
+    5|10|15|20|25|30|35|40|45|50|55) update_time;;
     10) update_backlight;;
-    20) update_time;;
     30) update_cpu;;
     40) update_memory;;
-    50) check_arch_updates;;
-    [1-5])
-      # update_time
-      display
-      ;;
+    # 50) check_arch_updates;;
+    # [1-5])
+    #   display
+    #   ;;
   esac
+  display
 done

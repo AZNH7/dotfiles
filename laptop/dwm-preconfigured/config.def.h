@@ -104,7 +104,7 @@ static const char *const autostart[] = {
   "systemctl", "--user", "restart", "pipewire-pulse", NULL,
   "exec", "dbus-update-activation-environment --all", NULL,
   "dunst", "-config", "/home/$USER/.config/dunst/dunstrc", NULL,
-  "picom", "--animations", "-b", NULL,
+  "picom", NULL,
   "sh", "-c", "feh --randomize --bg-fill /home/$USER/.config/wallpapers/*", NULL,
   "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm-preconfigured/scripts/status", NULL,
   "slstatus", NULL,

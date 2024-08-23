@@ -39,7 +39,7 @@ ethernet_status() {
 active_monitor() {
     # check if more than one monitor is connected
     if xrandr | grep -q " connected"; then
-        monitor=" 󰏭 $(xrandr --listactivemonitors | grep -oP 'eDP.*' | cut -d ' ' -f 1)"
+        monitor=" 󰏭 $(xrandr --listactivemonitors | grep 'DP.*' | cut -d ' ' -f 3)"
     else
         monitor=""
     fi
