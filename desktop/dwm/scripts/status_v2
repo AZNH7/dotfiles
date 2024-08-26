@@ -4,7 +4,7 @@ interval=0
 
 cpu() {
 	cpu_val=$(grep -o "^[^ ]*" /proc/loadavg)
-	printf " "
+	printf "CPU"
 	printf "$cpu_val"
 }
 
@@ -12,9 +12,9 @@ pkg_updates() {
 	updates=$({ timeout 20 checkupdates 2>/dev/null || true; } | wc -l)
 
 	if [ "$updates" -eq 0 ]; then
-		printf "  Updated"
+		printf " Updated"
 	else
-		printf " $updates"" updates"
+		printf "$updates"" updates"
 	fi
 }
 
@@ -62,7 +62,7 @@ calender() {
 vol_bar() {
 	vol="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
 
-	# If muted, print 󰖁 MUTED and exit.
+	# If muted, print 󰖁 and exit.
 	[ "$vol" != "${vol%\[MUTED\]}" ] && printf "󰖁 MUTED" && exit
 	
 	vol="${vol#Volume: }"
@@ -89,7 +89,7 @@ vol_bar() {
 weather() {
 	LOCATION=Berlin
 	DATA=$(curl -s wttr.in/$LOCATION?format=1 | grep -o ".[0-9].*")
-	printf " ${DATA}"
+	printf " $DATA"
 }
 
 while true; do

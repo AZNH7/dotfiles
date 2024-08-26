@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# set basename 
+exec -a "dwm_bar_status" "$0" "$@"
+
 # Initialize
 printf "$$" > ~/.cache/pidofbar
 sec=0

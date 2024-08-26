@@ -95,12 +95,12 @@ static const char *colors[][3]      = {
 // };
 
 static const char *const autostart[] = {
-  "xrandr", "--output", "DP-1", "--mode", "2560x1440", "--rate", "144", "--pos", "0x0", "--rotate", "normal", "--output", "DP-2", "--primary" "--mode", "2560x1440", "--rate", "244", "--pos", "2560x0", "--rotate", "normal", NULL,
+  "xrandr", "--output", "DP-1", "--mode", "2560x1440", "--rate", "144", "--scale", "1.0", "--pos", "0x0", "--rotate", "normal", "--output", "DP-2", "--primary" "--mode", "2560x1440", "--rate", "244", "--scale", "1.0", "--pos", "2560x0", "--rotate", "normal", NULL,
   "xset", "s", "off", NULL,
   "xset", "s", "noblank", NULL,
   "xset", "-dpms", NULL,
   "dbus-update-activation-environment", "--systemd", "--all", NULL,
-  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/desktop/dwm-preconfigured/scripts/status", NULL,
+  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/desktop/dwm-preconfigured/scripts/status_v2", NULL,
   "flameshot", NULL,
   "dunst", "-config", "/home/$USER/.config/dunst/dunstrc", NULL,
   "picom", NULL,
