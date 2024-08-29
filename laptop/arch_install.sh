@@ -308,7 +308,8 @@ install_aur_helper $aur_helper
 
 # Install additional software
 echo "Installing additional software..."
-sudo $aur_helper -S firefox kitty act-bin adobe-source-code-pro-fonts adwaita-cursors adwaita-icon-theme appimagelauncher-bin arandr awesome-terminal-fonts awesome-terminal-fonts-patched bat blueman bluez brightnessctl btop cantarell-fonts cifs-utils conky cpupower-gui-git cups cups-pdf curl discord dmenu docker docker-compose dunst fwupd nm-applet blueman solaar nextcloud-client rofi rsync 1password slack-desktop steam bitwarden-bin ttf-roboto ttf-roboto-mono ttf-roboto-slab visual-studio-code-bin czkawka-gui-bin kvantum nwg-look obsidian picom ranger teams-for-linux-bin theia-bin volumeicon pavucontrol okular git gphoto2 v4l-utils v4l2loopback-dkms ffmpeg linux-headers xdg-desktop-portal-lxqt hunspell flameshot xorg-xsetroot alsa-utils acpilight base-devel extra/git extra/libx11 extra/libxcb extra/libxinerama extra/libxft extra/imlib2
+sudo $aur_helper -Syy
+sudo $aur_helper -S --needed $(cat pkglist.txt)
 
 # Exit chroot
 echo "Exiting chroot..."
