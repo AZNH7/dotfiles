@@ -17,62 +17,9 @@ update_time() {
   time="  $(date "+%b %d %H:%M ")"
 }
 
-# update_weather() {
-#   weather=" $(curl -s "wttr.in/berlin?format=1" | awk '{print $2}')"
-# }
-
-# update_bat() {
-#   if [[ -e /sys/class/power_supply/BAT0/status ]]; then
-#     bat_status=$(< /sys/class/power_supply/BAT0/status)
-#     if [[ -e /sys/class/power_supply/BAT0/capacity ]]; then
-#       bat_capacity=$(< /sys/class/power_supply/BAT0/capacity)
-#       bat=" $bat_status $bat_capacity%"
-#     else
-#       bat="$bat_status (capacity not available)"
-#     fi
-#   fi
-# }
-
-update_bat() {
-    case $BLOCK_BUTTON in
-    	3) notify-send "🔋 Battery module" "🔋: discharging
-    🛑: not charging
-    ♻: stagnant charge
-    🔌: charging
-    ⚡: charged
-    ❗: battery very low!
-    - Scroll to change adjust xbacklight." ;;
-    	4) xbacklight -inc 10 ;;
-    	5) xbacklight -dec 10 ;;
-    	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
-    esac
-
-    # Loop through all attached batteries and format the info
-    for battery in /sys/class/power_supply/BAT0; do
-    	# If non-first battery, print a space separator.
-    	[ -n "${capacity+x}" ] && printf " "
-    	# Sets up the status and capacity
-    	case "$(cat "$battery/status" 2>&1)" in
-    		"Full") status="" ;;
-    		"Discharging") status="󰂀" ;;
-    		"Charging") status="󰂄" ;;
-    		"Not charging") status="" ;;
-    		"Unknown") status="󱟩" ;;
-    		*) exit 1 ;;
-    	esac
-    	capacity="$(cat "$battery/capacity" 2>&1)"
-    	# Will make a warn variable if discharging and low
-    	[ "$status" = "󱊡" ] && [ "$capacity" -le 25 ] && warn="❗"
-    	# Prints the info
-    	printf "%s%s%d%%" "$status" "$warn" "$capacity"; unset warn
-        bat="$status $capacity%"
-    done
-}
-
 update_vol() {
-  # Check if the volume is muted 
-  defualt_sink=$(pactl info | grep "Default Sink" | awk '{print $3}')
-  muted=$(pactl list sinks | grep -A 10 "$defualt_sink" | awk '/Mute:/ {print $2}')
+  # Check if the volume is muted
+  muted=$(pactl list sinks | awk '/Mute:/ {print $2}' | sed -n '2p')
   
   if [ "$muted" = "yes" ]; then
     vol="󰖁 Muted"
@@ -95,13 +42,6 @@ listen_for_volume_changes() {
   done
 }
 
-update_backlight() {
-  if [[ -e /sys/class/backlight/intel_backlight/actual_brightness ]]; then
-    actual_brightness=$(< /sys/class/backlight/intel_backlight/actual_brightness)
-    max_brightness=$(< /sys/class/backlight/intel_backlight/max_brightness)
-    backlight="☀$((actual_brightness * 100 / max_brightness))%"
-  fi
-}
 
 check_arch_updates() {
   updates=$(checkupdates | wc -l)
@@ -112,19 +52,17 @@ check_arch_updates() {
   fi
 }
 
-wifi_status() {
-  if [[ -n $(iwgetid -r) ]]; then
-    wifi="󰤨$(iwgetid -r)"
+ethernet_status() {
+  if ip link show enp0s31f6 | grep -q "state UP"; then
+    wifi="󰈁 "
   else
-    wifi="󰤮"
+    wifi="󰈂 "
   fi
 }
 
 # Display function
 display() {
   status=""
-  [[ -n "$bat" ]] && status+=" $bat "
-  [[ -n "$backlight" ]] && status+="$backlight "
   [[ -n "$vol" ]] && status+="$vol "
   [[ -n "$time" ]] && status+="$time"
   [[ -n "$wifi" ]] && status+="$wifi"
@@ -132,7 +70,7 @@ display() {
   # [[ -n "$weather" ]] && status+="$weather"
   [[ -n "$cpu" ]] && status+="$cpu"
   [[ -n "$memory" ]] && status+="$memory"
-  # [[ -n "$status" ]] &&
+  [[ -n "$status" ]] &&
   xsetroot -name "$status"
 }
 
@@ -143,13 +81,13 @@ trap "update_bat; display" "RTMIN+2"
 
 # Initial updates
 update_vol
-update_backlight
-update_bat
 update_time
+# update_weather
 update_cpu
 update_memory
-# check_arch_updates
-wifi_status
+check_arch_updates
+ethernet_status
+
 
 # Start the volume listener in the background
 listen_for_volume_changes &
@@ -159,14 +97,12 @@ while true; do
   sleep 1
   sec=$((sec + 1))
   case $((sec % 60)) in
-    0) update_bat;;
-    10) update_backlight;;
-    20) update_time;;
+    # 20) update_weather;;
     30) update_cpu;;
     40) update_memory;;
     # 50) check_arch_updates;;
     [1-5])
-      # update_time
+      update_time
       display
       ;;
   esac

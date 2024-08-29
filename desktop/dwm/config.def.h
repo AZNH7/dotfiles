@@ -1,38 +1,59 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
-static const unsigned int snap      = 26;       /* snap pixel */
-static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
-static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
-static const unsigned int systrayonleft  = 0;   /* 0: systray in the right corner, >0: systray on left of status text */
-static const unsigned int systrayspacing = 2;   /* systray spacing */
-static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
-static const int showsystray        = 1;        /* 0 means no systray */
-static const int showbar            = 1;        /* 0 means no bar */
-static const int topbar             = 1;        /* 0 means bottom bar */
-#define ICONSIZE 17   /* icon size */
+static const unsigned int refresh_rate    = 144;     /* matches dwm's mouse event processing to your monitor's refresh rate for smoother window interactions */
+static const unsigned int borderpx        = 1;        /* border pixel of windows */
+static const unsigned int snap            = 26;       /* snap pixel */
+static const int swallowfloating          = 1;        /* 1 means swallow floating windows by default */
+static const unsigned int systraypinning  = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static const unsigned int systrayonleft   = 0;   /* 0: systray in the right corner, >0: systray on left of status text */
+static const unsigned int systrayspacing  = 5;   /* systray spacing */
+static const int systraypinningfailfirst  = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
+static const int showsystray              = 1;        /* 0 means no systray */
+static const int showbar                  = 1;        /* 0 means no bar */
+static const int topbar                   = 1;        /* 0 means bottom bar */
+#define ICONSIZE 20   /* icon size */
 #define ICONSPACING 5 /* space between icon and title */
-static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=16", "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"  };
+#define SHOWWINICON 1       /* 0 means no winicon */
+static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=15", "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"  };
 static const char dmenufont[]       = "MesloLGS Nerd Font Mono:size=16";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+static const char col_gray1[]       = "#222222"; // background color for unfocused windows is dark gray
+static const char col_gray2[]       = "#444444"; // border color for unfocused windows is dark gray
+static const char col_gray3[]       = "#bbbbbb"; // foreground color for unfocused windows is light gray
+static const char col_gray4[]       = "#eeeeee"; // background color for focused windows is light gray
+static const char col_cyan[]        = "#005577"; // border color for focused windows is cyan
+static const char col_red[]         = "#ff0000"; // border color for focused windows is red
+static const char col_black[]       = "#000000"; // background color for focused windows is black
+static const char white[]           = "#ffffff"; // background color for focused windows is black
+
+// Define the enumeration for color schemes
+enum Scheme {
+    // SchemeNorm,
+    // SchemeSel,
+    SchemeTitle,
+    TabSel,
+    // TabNorm,
+};
+
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeNorm] = { white, col_black, col_black }, 
+	[SchemeSel]  = { white, col_cyan,  col_black }, 
+	[SchemeTitle] = { white, col_black,  col_black  },
+	// [TabSel] = { white, col_cyan,  col_black },
+	[SchemeStatus]  = { white, col_black,  col_black  }, // Statusbar right {text,background,not used but cannot be empty}
+	[SchemeTagsSel]  = { white, col_cyan,  col_cyan  }, // Tagbar left selected {text,background,not used but cannot be empty}
+	[SchemeTagsNorm]  = { white, col_black,  col_black  }, // Tagbar left unselected {text,background,not used but cannot be empty}
+	// [SchemeInfoSel]  = { col_black, col_black,  col_black  }, // infobar middle  selected {text,background,not used but cannot be empty}
+	// [SchemeInfoNorm]  = { col_black, col_gray1,  col_black  }, // infobar middle  unselected {text,background,not used but cannot be empty}
 };
 
 static const char *const autostart[] = {
-  "xrandr", "--output", "DP-1", "--mode", "2560x1440", "--rate", "144", "--pos", "0x0", "--rotate", "normal", "--output", "DP-2", "--primary" "--mode", "2560x1440", "--rate", "244", "--pos", "2560x0", "--rotate", "normal", NULL,
   "xset", "s", "off", NULL,
   "xset", "s", "noblank", NULL,
   "xset", "-dpms", NULL,
   "dbus-update-activation-environment", "--systemd", "--all", NULL,
-  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/desktop/dwm-preconfigured/scripts/status", NULL,
+  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/desktop/dwm/scripts/status_v2", NULL,
   "flameshot", NULL,
   "dunst", "-config", "/home/$USER/.config/dunst/dunstrc", NULL,
   "picom", NULL,
@@ -42,10 +63,8 @@ static const char *const autostart[] = {
   "solaar", "-w", "hide", NULL,
   "nm-applet", "--indicator", NULL,
   "blueman-applet", NULL,
-  "volumeicon", NULL,
   "unclutter", NULL,
   "conky", "-c", "/home/$USER/.config/conky/qtile/gruvbox-dark-01.conkyrc", NULL,
-  "rsync", "-avp", "--exclude={home_server, Nextcloud, gom, .cache, .conda, .cargo, Games, games, .local/share, .config/heroic, .rustup}", "/home/$USER/", "home_server/PC-backups/personal_PC_rsync/$(date +%Y-%m-%d)", NULL,
 };
 
 /* tagging */
@@ -123,9 +142,9 @@ static Key keys[] = {
 	{ MODKEY,                       XK_z,          incnmaster,             {.i = -1 } }, // increase the number of clients in the master area
 	{ MODKEY,                       XK_h,          setmfact,               {.f = -0.05} }, // decrease the size of the master area compared to the stack area(s)
 	{ MODKEY,                       XK_l,          setmfact,               {.f = +0.05} }, // increase the size of the master area compared to the stack area(s)
-	{ MODKEY|ShiftMask,             XK_h,          setcfact,               {.f = +0.25} }, // increase size respective to other windows within the same area
-	{ MODKEY|ShiftMask,             XK_l,          setcfact,               {.f = -0.25} }, // decrease client size respective to other windows within the same area
-	{ MODKEY|ShiftMask,             XK_o,          setcfact,               {.f =  0.00} }, // reset client area
+	// { MODKEY|ShiftMask,             XK_h,          setcfact,               {.f = +0.25} }, // increase size respective to other windows within the same area
+	// { MODKEY|ShiftMask,             XK_l,          setcfact,               {.f = -0.25} }, // decrease client size respective to other windows within the same area
+	// { MODKEY|ShiftMask,             XK_o,          setcfact,               {.f =  0.00} }, // reset client area
 	{ MODKEY,                       XK_x,          zoom,                   {0} }, // moves the currently focused window to/from the master area (for tiled layouts)
 	{ MODKEY,                       XK_Tab,        view,                   {0} }, // view last focused tag
 	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} }, // close the currently focused window
@@ -134,7 +153,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_f,          fullscreen,             {0} }, // toggles fullscreen for the currently selected client
 	{ MODKEY,                       XK_space,      setlayout,              {0} }, // toggles between current and previous layout
 	{ MODKEY|ShiftMask,             XK_m,          togglefloating,         {0} }, // toggles between tiled and floating arrangement for the currently focused client
-	{ MODKEY|ShiftMask,             XK_y,          togglefakefullscreen,   {0} }, // toggles "fake" fullscreen for the selected window
+	// { MODKEY|ShiftMask,             `,          togglefakefullscreen,   {0} }, // toggles "fake" fullscreen for the selected window
 	{ MODKEY,                       XK_0,          view,                   {.ui = ~0 } }, // view all tags on the current monitor
 	{ MODKEY,                       XK_comma,      focusmon,               {.i = -1 } }, // focus on the previous monitor, if any
 	{ MODKEY,                       XK_period,     focusmon,               {.i = +1 } }, // focus on the next monitor, if any

@@ -113,7 +113,6 @@ static const char *const autostart[] = {
   "volumeicon", NULL,
   "unclutter", NULL,
   "conky", "-c", "/home/$USER/.config/conky/qtile/gruvbox-dark-01.conkyrc", NULL,
-  "rsync", "-avp", "--exclude={home_server, Nextcloud, gom, .cache, .conda, .cargo, Games, games, .local/share, .config/heroic, .rustup}", "/home/$USER/", "home_server/PC-backups/personal_PC_rsync/$(date +%Y-%m-%d)", NULL,
 };
 
 /* tagging */

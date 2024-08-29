@@ -16,9 +16,9 @@ static const int systraypinningfailfirst  = 1;      /* 1: if pinning fails, disp
 static const int showsystray              = 1;      /* 0 means no systray */
 static const int showbar                  = 1;      /* 0 means no bar */
 static const int topbar                   = 1;      /* 0 means bottom bar */
-static const int floatbar                 = 1;        /* 1 means the bar will float(don't have padding),0 means the bar have padding */
-static const int tag_preview        = 0;        /* 1 means enable, 0 is off */
-static const int colorfultag        = 1;        /* 0 means use SchemeSel for selected non vacant tag */
+static const int floatbar                 = 1;      /* 1 means the bar will float(don't have padding),0 means the bar have padding */
+static const int tag_preview              = 0;        /* 1 means enable, 0 is off */
+static const int colorfultag              = 1;        /* 0 means use SchemeSel for selected non vacant tag */
 #define ICONSIZE                            17      /* icon size */
 #define ICONSPACING                         5       /* space between icon and title */
 #define SHOWWINICON                         1       /* 0 means no winicon */
@@ -106,7 +106,7 @@ static const char *const autostart[] = {
   "dunst", "-config", "/home/$USER/.config/dunst/dunstrc", NULL,
   "picom", NULL,
   "sh", "-c", "feh --randomize --bg-fill /home/$USER/.config/wallpapers/*", NULL,
-  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm-preconfigured/scripts/status", NULL,
+  "sh", "-c", "./Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm-preconfigured/scripts/status_v2", NULL,
   "slstatus", NULL,
   "nextcloud", NULL,
   "solaar", "-w", "hide", NULL,
@@ -115,7 +115,6 @@ static const char *const autostart[] = {
   "volumeicon", NULL,
   "unclutter", NULL,
   "conky", "-c", "/home/$USER/.config/conky/qtile/gruvbox-dark-01.conkyrc", NULL,
-  "rsync", "-avp", "--exclude={home_server, Nextcloud, gom, .cache, .conda, .cargo, Games, games, .local/share, .config/heroic, .rustup}", "/home/$USER/", "home_server/$USER-work/laptop_backup/flink/$(date +%Y-%m-%d)", NULL,
 };
 
 /* tagging */
