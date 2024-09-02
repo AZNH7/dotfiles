@@ -121,6 +121,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } }, // spawn a terminal
 	// { MODKEY|ShiftMask,             XK_b,          spawn,                  SHCMD ("xdg-open https://")}, // open default browser
 	{ MODKEY|ShiftMask,             XK_b,          spawn,				   {.v = browsercmd}}, // open firefox profile
+	{ MODKEY|ControlMask,			XK_l,		   spawn,				   SHCMD ("./Nextcloud/git_repos/aznh7/dotfiles/laptop/dwm-preconfigured/scripts/lock") }, // i3lock 
 	{ MODKEY,                       XK_p,          spawn,                  SHCMD ("flameshot full -p /home/$USER/Screenshots/")}, // capture full screen screenshot
 	{ MODKEY|ShiftMask,             XK_p,          spawn,                  SHCMD ("flameshot gui -p /home/$USER/Screenshots/")}, // open flameshot gui for screenshot selection
 	{ MODKEY|ControlMask,           XK_p,          spawn,                  SHCMD ("flameshot gui --clipboard")}, // copy screenshot to clipboard
