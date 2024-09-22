@@ -4,7 +4,7 @@ interval=0
 
 cpu() {
 	cpu_val=$(grep -o "^[^ ]*" /proc/loadavg)
-	printf "CPU"
+	printf " "
 	printf "$cpu_val"
 }
 

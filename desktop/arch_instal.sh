@@ -102,14 +102,14 @@ install_aur_helper() {
   echo "Installing AUR helper: $1"
   case "$1" in
     paru)
-      git clone https://aur.archlinux.org/paru.git
-      cd paru
-      makepkg -si
+      git clone https://aur.archlinux.org/paru.git || { echo "Failed to clone paru"; exit 1; }
+      cd paru || { echo "Failed to enter paru directory"; exit 1; }
+      makepkg -si || { echo "Failed to install paru"; exit 1; }
       ;;
     yay)
-      git clone https://aur.archlinux.org/yay.git
-      cd yay
-      makepkg -si
+      git clone https://aur.archlinux.org/yay.git || { echo "Failed to clone yay"; exit 1; }
+      cd yay || { echo "Failed to enter yay directory"; exit 1; }
+      makepkg -si || { echo "Failed to install yay"; exit 1; }
       ;;
     *)
       echo "Invalid AUR helper. Please choose from: paru, yay"
@@ -240,8 +240,7 @@ echo "$hostname" | sudo tee /etc/hostname
 
 # Enable 32-bit multilib
 echo "Enabling 32-bit multilib..."
-sudo nano /etc/pacman.conf
-echo "[multilib]" | sudo tee -a /etc/pacman.conf
+sudo tee -a /etc/pacman.conf <<< "[multilib]"
 
 # Enable trim for SSD
 echo "Enabling trim for SSD..."
